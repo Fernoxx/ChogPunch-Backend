@@ -147,6 +147,27 @@ app.get("/health", (_, res) => {
   })
 })
 
+app.get("/eligible/:address", async (req, res) => {
+  const address = req.params.address?.toLowerCase()
+  if (!address) return res.status(400).json({ eligible: false })
+
+  try {
+    const { data, error } = await supabase
+      .from("mon_claims")
+      .select("*")
+      .eq("wallet_address", address)
+
+    if (error) {
+      console.error("❌ Supabase query error:", error.message)
+      return res.status(500).json({ eligible: false })
+    }
+
+    res.json({ eligible: data.length > 0 })
+  } catch (err) {
+    res.status(500).json({ eligible: false })
+  }
+})
+
 // ✅ Start Server
 app.listen(3001, () => {
   console.log("🚀 CHOGPUNCH Backend running at http://localhost:3001")
