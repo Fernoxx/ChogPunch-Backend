@@ -1,59 +1,46 @@
-# 🥊 ChogPunch - Punch to Earn MON
+# 🥊 ChogPunch Backend - Express.js Claim Engine
 
-A Web3 game where users punch their way to earning MON tokens on the Monad blockchain.
+Node.js Express backend that monitors Base blockchain for ChogPunch game events and distributes MON tokens on Monad.
 
 ## 🏗️ Project Structure
 
 ```
-ChogPunch/
-├── chogpunch-backend/        ← Node.js Express backend
-│   ├── index.js             ← Main server with event monitoring
-│   ├── abi/
-│   │   └── chogpunchAbi.json ← Contract ABI
-│   ├── .env                 ← Environment variables
-│   └── package.json         ← Backend dependencies
-└── chogpunch-frontend/       ← Next.js React frontend
-    ├── src/
-    │   ├── app/
-    │   │   ├── page.tsx     ← Main game interface
-    │   │   ├── layout.tsx   ← App layout with providers
-    │   │   └── providers.tsx ← Web3 providers setup
-    │   ├── components/ui/
-    │   │   └── ChogFighter.tsx ← Interactive game component
-    │   └── utils/
-    │       ├── wagmi.ts     ← Web3 configuration
-    │       └── contract.ts  ← Blockchain interactions
-    └── package.json         ← Frontend dependencies
+ChogPunch-Backend/               ← This repository
+├── index.js                    ← Main Express server with event monitoring
+├── abi/
+│   └── chogpunchAbi.json       ← Contract ABI
+├── .env                        ← Environment variables
+├── package.json                ← Dependencies
+└── README.md                   ← This file
 ```
 
 ## 🎮 How It Works
 
-1. **Frontend Game**: Users connect wallet and punch to reach 20 hits
-2. **Smart Contract**: Submits score to Base blockchain contract
-3. **Backend Monitoring**: Polls Base for `UserEligible` events
-4. **MON Distribution**: Automatically sends 1 MON token on Monad
-5. **Database Tracking**: Prevents duplicate claims via Supabase
+1. **Express Server**: Runs claim engine with health monitoring
+2. **Event Monitoring**: Polls Base blockchain for `UserEligible` events
+3. **Duplicate Prevention**: Checks Supabase database for existing claims
+4. **MON Distribution**: Simulates sending 1 MON token to eligible users
+5. **Health Endpoint**: Provides system status and component health
 
 ## 🚀 Quick Start
 
-### Backend Setup
 ```bash
-cd chogpunch-backend
+# Install dependencies
 npm install
-# Configure .env file with your keys
+
+# Configure environment variables in .env
+# Add your actual API keys and private keys
+
+# Start the server
 npm start
 ```
 
-### Frontend Setup
-```bash
-cd chogpunch-frontend
-npm install
-npm run dev
-```
+Server will run on `http://localhost:3001`
 
 ## 🔧 Environment Variables
 
-### Backend (.env)
+Create a `.env` file with your actual values:
+
 ```env
 ALCHEMY_RPC_URL=https://base-mainnet.g.alchemy.com/v2/your-alchemy-key
 CONTRACT_ADDRESS=0x76a607429bb5290e6c1ca1fad2e00fa8c2f913df
@@ -62,33 +49,58 @@ SUPABASE_URL=https://oytglfzxkunhqkdibwad.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 ```
 
-### Frontend (wagmi.ts)
-```typescript
-projectId: 'YOUR_WALLETCONNECT_PROJECT_ID'
-```
-
 ## 📋 Health Check
 
-Backend health endpoint: `http://localhost:3001/health`
+**Endpoint**: `GET /health`
 
-Returns component status and missing environment variables.
+Returns component status and missing environment variables:
+
+```json
+{
+  "status": "online",
+  "timestamp": "2025-07-24T15:12:43.078Z",
+  "components": {
+    "supabase": true,
+    "provider": false,
+    "contract": false,
+    "signer": false
+  },
+  "missingEnvVars": ["SUPABASE_SERVICE_ROLE_KEY", "ALCHEMY_RPC_URL", "MONAD_PRIVATE_KEY"]
+}
+```
 
 ## 🛠️ Technologies
 
-- **Backend**: Node.js, Express.js, ethers.js, Supabase
-- **Frontend**: Next.js, TypeScript, Tailwind CSS, RainbowKit, wagmi
-- **Blockchain**: Base (mainnet), Monad (testnet)
-- **Database**: Supabase
+- **Runtime**: Node.js with ES modules
+- **Framework**: Express.js
+- **Blockchain**: ethers.js for Base/Monad interaction
+- **Database**: Supabase for claim tracking
+- **Environment**: dotenv for configuration
 
-## 📦 Dependencies Installed
+## 📦 Dependencies
 
-✅ **Backend**: `express`, `ethers`, `dotenv`, `@supabase/supabase-js`  
-✅ **Frontend**: `wagmi`, `@rainbow-me/rainbowkit`, `ethers`, `@tanstack/react-query`
+- `express` - Web server framework
+- `ethers` - Ethereum blockchain interaction
+- `@supabase/supabase-js` - Database client
+- `dotenv` - Environment variable management
 
-## 🔗 Repository
+## 🔄 Event Processing
 
-GitHub: [ChogPunch-Backend](https://github.com/Fernoxx/ChogPunch-Backend)
+The server continuously monitors the Base blockchain contract for `UserEligible` events:
+
+1. Queries last 1000 blocks for events
+2. Checks if user already claimed (Supabase)
+3. Prevents duplicate processing with in-memory cache
+4. Logs MON distribution simulation
+5. Records claim in database
+
+## 🚨 Error Handling
+
+- **Graceful Startup**: Server starts even with missing config
+- **Environment Validation**: Warns about placeholder values
+- **Component Monitoring**: Tracks initialization status
+- **Comprehensive Logging**: Detailed error messages with emojis
 
 ---
 
-**Ready to punch your way to MON tokens!** 🥊💰
+**Ready to process ChogPunch claims!** 🥊💰
