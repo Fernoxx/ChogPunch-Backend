@@ -1,0 +1,14 @@
+{
+  "name": "chogpunch-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
+    "dotenv": "^16.3.2",
+    "ethers": "^6.10.0",
+    "express": "^5.1.0"
+  }
+}
