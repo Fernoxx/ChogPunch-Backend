@@ -6,8 +6,9 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "ethers": "^6.10.0",
     "@supabase/supabase-js": "^2.39.3",
-    "dotenv": "^16.3.2"
+    "dotenv": "^16.3.2",
+    "ethers": "^6.10.0",
+    "express": "^5.1.0"
   }
 }
